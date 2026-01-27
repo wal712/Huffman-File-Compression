@@ -12,4 +12,8 @@ typedef struct {
 	entry *arr;
 } Hashmap;
 
+void map_init(Hashmap *map);
+void add_entry(Hashmap *map, char key, unsigned int value);
+entry* get_entry(Hashmap *map, char key);
+
 #endif
