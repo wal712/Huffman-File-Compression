@@ -3,12 +3,12 @@ CFLAGS = -Wall -Wextra -pedantic
 .PHONY: press test
 
 press:
-	gcc $(CFLAGS) compression.c -o press
+	gcc $(CFLAGS) compression.c -o /bin/press
 
 test: test_compile
-	./test
+	./bin/test
 
 test_compile:
-	gcc $(CFLAGS) test.c Hashmap.c -o test && ./test
+	gcc $(CFLAGS) test.c Hashmap.c -o ./bin/test
 
 

@@ -1,14 +1,16 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
+#define START_CAPACITY 8
+
 typedef struct {
     unsigned int value;
     char key;
 } entry;
 
 typedef struct {
-	unsigned int capacity;
-	unsigned int length;
+	size_t capacity;
+	size_t length;
 	entry *arr;
 } Hashmap;
 

@@ -1,4 +1,7 @@
 #include <stdio.h>
 #include "Hashmap.h"
 
-//void table_init()
+void map_init(Hashmap *map)
+{
+
+}

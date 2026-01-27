@@ -5,7 +5,13 @@
 #include <stdlib.h>
 
 #include "Hashmap.h"
-
+void test_map_init(Hashmap *map)
+{
+    map_init(map);
+    assert(map->capacity == START_CAPACITY);
+    assert(map->length == 0);
+    
+}
 int main()
 {
     int fd = open("test.txt", O_RDONLY);
@@ -17,10 +23,7 @@ int main()
     }
 
     char c;
-//    for (int i = 0; i < 1000; i++)
- //   {
-   //     read(fd, &c, sizeof(c));
-     //   printf("%c\n", c);
-    //}
+    Hashmap *map;
+    test_map_init(map);
     return 0;
 }
