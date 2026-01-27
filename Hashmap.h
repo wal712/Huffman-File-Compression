@@ -6,4 +6,10 @@ typedef struct {
     char key;
 } entry;
 
+typedef struct {
+	unsigned int capacity;
+	unsigned int length;
+	entry *arr;
+} Hashmap;
+
 #endif
