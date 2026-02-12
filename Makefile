@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -pedantic
 .PHONY: press test
 
 press:
-	gcc $(CFLAGS) compression.c -o ./bin/press
+	gcc $(CFLAGS) Priorityqueue.c compression.c -o ./bin/press
 
 test: test_compile
 	./bin/test
