@@ -3,7 +3,8 @@
 
 #include "Priorityqueue.h"
 
-void init_leaf(Node *node, unsigned char val, int weight) {
+void init_leaf(Node *node, unsigned char val, int weight)
+{
   assert(node);
   node->val = val;
   node->weight = weight;
@@ -11,14 +12,16 @@ void init_leaf(Node *node, unsigned char val, int weight) {
   node->right = NULL;
 }
 
-void init_queue(PQueue *q, int size) {
+void init_queue(PQueue *q, int size)
+{
   assert(q);
   assert(size > 0);
 
-  q->arr = (Node **) malloc(sizeof(Node *) * size);
+  q->arr = (Node **)malloc(sizeof(Node *) * size);
   assert(q->arr);
 
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < size; i++)
+  {
     q->arr[i] = NULL;
   }
 
@@ -27,26 +30,38 @@ void init_queue(PQueue *q, int size) {
   q->head = 0;
 }
 
-void queue_add(PQueue *q, Node *item) {
+void queue_add(PQueue *q, Node *item)
+{
   assert(q);
   assert(q->arr);
   assert(item);
   assert(q->capacity > q->length);
-  
-  q->arr[q->length++] = item;
 
-  for (int i = q->length - 1; i > q->head; i--) {
-    if (q->arr[i]->weight < q->arr[i - 1]->weight) {
-      Node *temp = q->arr[i - 1];
-      q->arr[i - 1] = q->arr[i];
-      q->arr[i] = temp;
-    } else {
+  int tail = (q->head + q->length++) % q->capacity;
+
+  q->arr[tail] = item;
+
+  // TODO: Need to handle circular insert
+  for (int i = 0; i < q->length - 1; i++)
+  {
+    int idx1 = (((tail - i) % q->capacity) + q->capacity) % q->capacity;     // One liner to get positive remainder in the range [0, capacity - 1]
+    int idx2 = (((tail - i - 1) % q->capacity) + q->capacity) % q->capacity; // One liner to get positive remainder in the range [0, capacity - 1]
+
+    if (q->arr[idx1]->weight < q->arr[idx2]->weight)
+    {
+      Node *temp = q->arr[idx2];
+      q->arr[idx2] = q->arr[idx1];
+      q->arr[idx1] = temp;
+    }
+    else
+    {
       break;
     }
   }
 }
 
-Node *dequeue(PQueue *q) {
+Node *dequeue(PQueue *q)
+{
   assert(q);
   assert(q->arr);
   assert(q->length > 0);
