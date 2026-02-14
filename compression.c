@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "Priorityqueue.h"
 #define BYTE_MAX 256
@@ -74,6 +75,7 @@ int main(int argc, char **argv)
       continue;
     }
     Node *curr = (Node *)malloc(sizeof(Node));
+    assert(curr);
     init_leaf(curr, (unsigned char)i, freq_table[i]);
     queue_add(&q, curr);
   }
@@ -87,6 +89,32 @@ int main(int argc, char **argv)
   // Node *test = dequeue(&q);
   // printf("length after dequeue: %d\t head after dequeue %d\n", q.length, q.head);
   //  TODO: build huffman tree
+  while (q.length > 1)
+  {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    Node *pop1 = dequeue(&q);
+    Node *pop2 = dequeue(&q);
+
+    assert(new_node);
+    assert(pop1);
+    assert(pop2);
+
+    // Left is smaller, right is bigger
+    if (pop1 < pop2)
+    {
+      init_node(new_node, pop1, pop2, pop1->weight + pop2->weight);
+    }
+    else
+    {
+      init_node(new_node, pop2, pop1, pop1->weight + pop2->weight);
+    }
+
+    queue_add(&q, new_node);
+  }
+
+  Node *huff_tree = dequeue(&q);
+  assert(huff_tree);
+  assert(q.length == 0);
 
   fclose(input_file);
   // close(fd);j

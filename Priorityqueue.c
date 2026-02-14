@@ -12,6 +12,18 @@ void init_leaf(Node *node, unsigned char val, int weight)
   node->right = NULL;
 }
 
+void init_node(Node *node, Node *left, Node *right, int weight)
+{
+  assert(node);
+  assert(left);
+  assert(right);
+  assert(weight > 0);
+
+  node->left = left;
+  node->right = right;
+  node->weight = weight;
+}
+
 void init_queue(PQueue *q, int size)
 {
   assert(q);
