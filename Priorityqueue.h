@@ -5,10 +5,10 @@ typedef struct Node Node;
 
 struct Node
 {
-    int weight;
-    unsigned char val;
     Node *left;
     Node *right;
+    int weight;
+    unsigned char val;
 };
 
 typedef struct

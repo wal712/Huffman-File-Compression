@@ -7,6 +7,14 @@
 #include "Priorityqueue.h"
 #define BYTE_MAX 256
 
+void gen_huff_tree(Node *tree, unsigned char *code_table ,unsigned char code, int code_length)
+{
+  if (!tree->left && !tree->right)
+  {
+    
+  }
+}
+
 int get_max(const void *num1, const void *num2)
 {
   int a = *(int *)num1;
@@ -115,6 +123,9 @@ int main(int argc, char **argv)
   Node *huff_tree = dequeue(&q);
   assert(huff_tree);
   assert(q.length == 0);
+
+  unsigned char code_table[BYTE_MAX];
+  gen_huff_tree(huff_tree, code_table, 0, 1);
 
   fclose(input_file);
   // close(fd);j
