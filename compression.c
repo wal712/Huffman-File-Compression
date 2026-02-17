@@ -16,8 +16,14 @@ typedef struct
 void gen_huff_tree(Node *tree, huff_code *code_table, unsigned char code, int code_length)
 {
   assert(tree);
+
+  // base case
   if (!tree->left && !tree->right) // Leaf node
   {
+    assert(code_table[tree->val].length == 0); // should only be true if this index hasn't been used yet
+    code_table[tree->val].code = code;
+    code_table[tree->val].length = code_length;
+    return;
   }
 }
 
@@ -130,9 +136,9 @@ int main(int argc, char **argv)
   assert(huff_tree);
   assert(q.length == 0);
 
-  huff_code code_table[BYTE_MAX];
+  huff_code code_table[BYTE_MAX] = {{0}};
 
-  gen_huff_tree(huff_tree, &code_table, 0, 0);
+  gen_huff_tree(huff_tree, code_table, 0, 0);
 
   fclose(input_file);
   // close(fd);j
