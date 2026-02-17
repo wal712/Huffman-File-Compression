@@ -7,11 +7,17 @@
 #include "Priorityqueue.h"
 #define BYTE_MAX 256
 
-void gen_huff_tree(Node *tree, unsigned char *code_table ,unsigned char code, int code_length)
+typedef struct
 {
-  if (!tree->left && !tree->right)
+  int length;
+  unsigned char code;
+} huff_code;
+
+void gen_huff_tree(Node *tree, huff_code *code_table, unsigned char code, int code_length)
+{
+  assert(tree);
+  if (!tree->left && !tree->right) // Leaf node
   {
-    
   }
 }
 
@@ -124,8 +130,9 @@ int main(int argc, char **argv)
   assert(huff_tree);
   assert(q.length == 0);
 
-  unsigned char code_table[BYTE_MAX];
-  gen_huff_tree(huff_tree, code_table, 0, 1);
+  huff_code code_table[BYTE_MAX];
+
+  gen_huff_tree(huff_tree, &code_table, 0, 0);
 
   fclose(input_file);
   // close(fd);j
