@@ -1,4 +1,4 @@
-CFLAGS = -Wall -g -Wextra -pedantic
+CFLAGS = -Wall -g -Wextra -pedantic -std=gnu2x
 
 .PHONY: press test
 

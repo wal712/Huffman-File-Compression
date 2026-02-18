@@ -10,12 +10,13 @@
 typedef struct
 {
   int length;
-  unsigned char code;
+  unsigned long code;
 } huff_code;
 
-void gen_huff_tree(Node *tree, huff_code *code_table, unsigned char code, int code_length)
+void gen_huff_tree(Node *tree, huff_code *code_table, unsigned long code, int code_length)
 {
   assert(tree);
+  assert((size_t) code_length < sizeof(code) * 8); // sanity check for myself
 
   // base case
   if (!tree->left && !tree->right) // Leaf node
@@ -25,6 +26,12 @@ void gen_huff_tree(Node *tree, huff_code *code_table, unsigned char code, int co
     code_table[tree->val].length = code_length;
     return;
   }
+
+  assert(tree->left);
+  assert(tree->right);
+
+  gen_huff_tree(tree->left, code_table, (code << 1), code_length + 1);
+  gen_huff_tree(tree->right, code_table, (code << 1) + 1, code_length + 1);
 }
 
 int get_max(const void *num1, const void *num2)
@@ -74,16 +81,6 @@ int main(int argc, char **argv)
     // printf("idx: %u\n", (unsigned char)c);
     freq_table[(unsigned char)c]++;
   }
-
-  int sum = 0;
-  for (int i = 0; i < BYTE_MAX; i++)
-  {
-    sum += freq_table[i];
-  }
-
-  // printf("Total sum: %d\n", sum);
-
-  // qsort(&freq_table, BYTE_MAX, sizeof(int), get_max);
 
   PQueue q;
   init_queue(&q, BYTE_MAX);
@@ -139,6 +136,23 @@ int main(int argc, char **argv)
   huff_code code_table[BYTE_MAX] = {{0}};
 
   gen_huff_tree(huff_tree, code_table, 0, 0);
+
+  int sum = 0;
+  int product_sum = 0;
+  for (int i = 0; i < BYTE_MAX; i++)
+  {
+    if (code_table[i].length != 0)
+    {
+      printf("code: %lb\t length: %d\n", code_table[i].code, code_table[i].length);
+      sum += freq_table[i];
+      product_sum += (freq_table[i] * code_table[i].length);
+    }
+  }
+
+  // printf("Product sum: %d\t sum: %d\n", product_sum, sum);
+  // printf("Average num bits: %f\n", (float) product_sum / sum);
+
+
 
   fclose(input_file);
   // close(fd);j
