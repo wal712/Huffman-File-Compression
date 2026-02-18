@@ -153,7 +153,9 @@ int main(int argc, char **argv)
   // printf("Average num bits: %f\n", (float) product_sum / sum);
 
 
+  // TODO: make a byte writer
 
+  // TODO: make a byte reader
   fclose(input_file);
   // close(fd);j
   return 0;
