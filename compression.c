@@ -34,23 +34,6 @@ void gen_huff_tree(Node *tree, huff_code *code_table, unsigned long code, int co
   gen_huff_tree(tree->right, code_table, (code << 1) + 1, code_length + 1);
 }
 
-int get_max(const void *num1, const void *num2)
-{
-  int a = *(int *)num1;
-  int b = *(int *)num2;
-  if (a > b)
-  {
-    // printf("%d is bigger than %d\n", a, b);
-    return 1;
-  }
-  else if (a < b)
-  {
-    // printf("%d is bigger than %d\n", b, a);
-    return -1;
-  }
-  return 0;
-}
-
 int main(int argc, char **argv)
 {
   if (argc < 2)
@@ -137,22 +120,23 @@ int main(int argc, char **argv)
 
   gen_huff_tree(huff_tree, code_table, 0, 0);
 
-  int sum = 0;
-  int product_sum = 0;
-  for (int i = 0; i < BYTE_MAX; i++)
-  {
-    if (code_table[i].length != 0)
-    {
-      printf("code: %lb\t length: %d\n", code_table[i].code, code_table[i].length);
-      sum += freq_table[i];
-      product_sum += (freq_table[i] * code_table[i].length);
-    }
-  }
+  // int sum = 0;
+  // int product_sum = 0;
+  // for (int i = 0; i < BYTE_MAX; i++)
+  // {
+  //   if (code_table[i].length != 0)
+  //   {
+  //     printf("code: %lb\t length: %d\n", code_table[i].code, code_table[i].length);
+  //     sum += freq_table[i];
+  //     product_sum += (freq_table[i] * code_table[i].length);
+  //   }
+  // }
 
   // printf("Product sum: %d\t sum: %d\n", product_sum, sum);
   // printf("Average num bits: %f\n", (float) product_sum / sum);
 
 
+  
   // TODO: make a byte writer
 
   // TODO: make a byte reader
