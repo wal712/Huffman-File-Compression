@@ -9,9 +9,14 @@ void write_bytes(Byte_Buffer *buffer, unsigned long bytes, int length)
 
     for (int i = length - 1; i >= 0; i--)
     {
-        buffer->buffer = (buffer->buffer << 1) + (bytes & 1);
+        assert(buffer->length < BYTE_LENGTH);
+        buffer->buffer = (buffer->buffer << 1) + ((bytes >> i) & 1); // grabs leftmost bit, and appends to buffer, on loop
         buffer->length++;
-        bytes = bytes << 1;
-        
+
+        if (buffer->length == BYTE_LENGTH)
+        {
+            // write to file here
+            // TODO: decide if im keeping file descriptor in byte_buffer itself or pass to each function
+        }
     }
 }
