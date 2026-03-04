@@ -5,6 +5,8 @@
 #include <assert.h>
 
 #include "Priorityqueue.h"
+#include "ByteIO.h"
+
 #define BYTE_MAX 256
 
 typedef struct
@@ -135,9 +137,8 @@ int main(int argc, char **argv)
   // printf("Product sum: %d\t sum: %d\n", product_sum, sum);
   // printf("Average num bits: %f\n", (float) product_sum / sum);
 
-
-  
-  // TODO: make a byte writer
+  Byte_Buffer buffer = {{0}};
+  // TODO: create new file to write to
 
   // TODO: make a byte reader
   fclose(input_file);
