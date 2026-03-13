@@ -3,11 +3,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "Priorityqueue.h"
 #include "ByteIO.h"
 
 #define BYTE_MAX 256
+#define FILE_NAME_MAX 256
 
 typedef struct
 {
@@ -122,24 +124,25 @@ int main(int argc, char **argv)
 
   gen_huff_tree(huff_tree, code_table, 0, 0);
 
-  // int sum = 0;
-  // int product_sum = 0;
-  // for (int i = 0; i < BYTE_MAX; i++)
-  // {
-  //   if (code_table[i].length != 0)
-  //   {
-  //     printf("code: %lb\t length: %d\n", code_table[i].code, code_table[i].length);
-  //     sum += freq_table[i];
-  //     product_sum += (freq_table[i] * code_table[i].length);
-  //   }
-  // }
-
-  // printf("Product sum: %d\t sum: %d\n", product_sum, sum);
-  // printf("Average num bits: %f\n", (float) product_sum / sum);
-
-  Byte_Buffer buffer = {{0}};
+  Byte_Buffer buffer = {0};
   // TODO: create new file to write to
+  char new_filename[FILE_NAME_MAX] = "compressed_";
+  int max_length = FILE_NAME_MAX - strlen(new_filename);
+  strncat(new_filename, argv[1], max_length);
 
+  FILE *compressed_file = fopen(new_filename, "r");
+  if (compressed_file != NULL)
+  {
+    printf("Error: %s already exists as a file here. Please either rename or remove said file and try again\n", new_filename);
+    fclose(input_file);
+    // close(fd);j
+    return 0;
+  }
+
+  printf("compressed file name is: %s\n", new_filename);
+  compressed_file = fopen(new_filename, "w+");
+
+  assert(compressed_file);
   // TODO: make a byte reader
   fclose(input_file);
   // close(fd);j
