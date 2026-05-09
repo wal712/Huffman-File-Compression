@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     }
 
     fputc(' ', compressed_file);
-    fprintf(compressed_file, "%d", freq_table[i]);
+    fprintf(compressed_file, "%d ", freq_table[i]);
     fputc(i, compressed_file);
   }
 
