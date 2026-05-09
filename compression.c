@@ -20,7 +20,7 @@ typedef struct
 void gen_huff_tree(Node *tree, huff_code *code_table, unsigned long code, int code_length)
 {
   assert(tree);
-  assert((size_t) code_length < sizeof(code) * 8); // sanity check for myself
+  assert((size_t)code_length < sizeof(code) * 8); // sanity check for myself
 
   // base case
   if (!tree->left && !tree->right) // Leaf node
@@ -143,6 +143,44 @@ int main(int argc, char **argv)
   compressed_file = fopen(new_filename, "w+");
 
   assert(compressed_file);
+
+  // TODO: write out freq_table as header of compressed file:
+  /*
+   * I'm thinking write out frequency, then space, then byte, and end header with two newlines
+   * There should always be at least one frequency byte pair in header
+   * So we check for a newline after each character?
+   * Hmm, in that case we only need one newline, even if encoded character is newline, we don't care, we just check the byte after it
+   * So: read till space, interpret as int, read byte as byte, pair int and byte in freq table
+   * check if next character is space or newline
+   * If space, Repeat decoding steps above, if newline, end decoding
+   */
+
+  for (int i = 0; i < BYTE_MAX; i++)
+  {
+    if (freq_table[i] == 0)
+    {
+      continue;
+    }
+
+    fputc(' ', compressed_file);
+    fprintf(compressed_file, "%d", freq_table[i]);
+    fputc(i, compressed_file);
+  }
+
+  int compressed_freq_table[BYTE_MAX] = {0};
+
+  rewind(compressed_file);
+
+  c = fgetc(compressed_file);
+  assert(c == ' ');
+
+  char num_buffer[256] = {0};
+  while ((c = fgetc(compressed_file)) != ' ')
+  {
+    strncat(num_buffer, &c, 1);
+  }
+
+  printf("%s\n", num_buffer);
   // TODO: make a byte reader
   fclose(input_file);
   // close(fd);j
