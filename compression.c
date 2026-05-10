@@ -167,20 +167,46 @@ int main(int argc, char **argv)
     fputc(i, compressed_file);
   }
 
+  fputc('\n', compressed_file);
+
   int compressed_freq_table[BYTE_MAX] = {0};
 
   rewind(compressed_file);
 
-  c = fgetc(compressed_file);
-  assert(c == ' ');
+  // c = fgetc(compressed_file);
+  // assert(c == ' ');
 
   char num_buffer[256] = {0};
-  while ((c = fgetc(compressed_file)) != ' ')
+  char key;
+
+  while (1)
   {
-    strncat(num_buffer, &c, 1);
+    if ((c = fgetc(compressed_file)) == '\n')
+    {
+      // header over
+      break;
+    }
+
+    assert(c == ' ');
+    while ((c = fgetc(compressed_file)) != ' ')
+    {
+      assert(c != EOF);
+      strncat(num_buffer, &c, 1);
+    }
+
+    key = fgetc(compressed_file);
+    assert(key != EOF);
+
+    printf("%ld \t %c\n", strtol(num_buffer, NULL, 0), key);
+    compressed_freq_table[(unsigned char)key] = strtol(num_buffer, NULL, 0);
+    num_buffer[0] = '\0';
   }
 
-  printf("%s\n", num_buffer);
+  for (int i = 0; i < BYTE_MAX; i++)
+  {
+    assert(freq_table[i] == compressed_freq_table[i]);
+  }
+
   // TODO: make a byte reader
   fclose(input_file);
   // close(fd);j
