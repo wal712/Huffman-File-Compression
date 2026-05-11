@@ -168,6 +168,11 @@ int main(int argc, char **argv)
   }
 
   fputc('\n', compressed_file);
+  // TODO: write out length of file? or figure out how to ensure extra zero bytes after writer flush don't get interpreted
+
+  // TODO: write encoded file contents
+  // I think literally just read each byte from original file and find it in code table
+  // TODO: ugh write byte writer
 
   int compressed_freq_table[BYTE_MAX] = {0};
 
@@ -202,6 +207,8 @@ int main(int argc, char **argv)
     num_buffer[0] = '\0';
   }
 
+  // you can get rid of this later obviously
+  //  TODO: write actual tests bro
   for (int i = 0; i < BYTE_MAX; i++)
   {
     assert(freq_table[i] == compressed_freq_table[i]);
