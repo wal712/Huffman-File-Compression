@@ -84,14 +84,6 @@ int main(int argc, char **argv)
     queue_add(&q, curr);
   }
 
-  // for (int i = 0; i < q.length; i++)
-  //{
-  // printf("%d\n", q.arr[i]->weight);
-  //}
-
-  // printf("length before dequeue: %d\t head before dequeue %d\n", q.length, q.head);
-  // Node *test = dequeue(&q);
-  // printf("length after dequeue: %d\t head after dequeue %d\n", q.length, q.head);
   //  TODO: build huffman tree
   while (q.length > 1)
   {
@@ -124,7 +116,6 @@ int main(int argc, char **argv)
 
   gen_huff_tree(huff_tree, code_table, 0, 0);
 
-  Byte_Buffer buffer = {0};
   // TODO: create new file to write to
   char new_filename[FILE_NAME_MAX] = "compressed_";
   int max_length = FILE_NAME_MAX - strlen(new_filename);
@@ -172,7 +163,15 @@ int main(int argc, char **argv)
 
   // TODO: write encoded file contents
   // I think literally just read each byte from original file and find it in code table
-  // TODO: ugh write byte writer
+  rewind(input_file);
+  Byte_Buffer buffer = {0};
+  while ((c = fgetc(input_file)) != EOF)
+  {
+    huff_code current = code_table[(unsigned char)c];
+    write_bytes(&buffer, compressed_file, current.code, current.length);
+  }
+
+  flush_write(&buffer, compressed_file);
 
   int compressed_freq_table[BYTE_MAX] = {0};
 
