@@ -1,9 +1,9 @@
-CFLAGS = -Wall -g -Wextra -pedantic -std=gnu2x
+CFLAGS = -Wall -g -Wextra -pedantic 
 
 .PHONY: press clean
 
 press:
-	gcc $(CFLAGS) ByteIO.c Priorityqueue.c compression.c -o ./bin/press
+	clang $(CFLAGS) ByteIO.c Priorityqueue.c compression.c -o ./bin/press
 
 clean:
 	rm compressed*.txt

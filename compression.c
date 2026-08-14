@@ -243,7 +243,35 @@ int main(int argc, char **argv)
    * -> That last bit needs explaining, basically we might not hit a leaf with excess zero bits, and then we terminate so its fine, not sure tho
    */
 
-    fclose(input_file);
+  // TODO: Need to generalize creation of huff tree and code table so I can use seperately for compression and decompression
+  int read_bit;
+  Node *currnode = huff_tree;
+  while ((read_bit = read_bytes(&buffer, compressed_file)) != EOF) // TODO: add check if weve reached end of length specified in header
+  {
+    // TODO: HANDLE EXCESS BITS AT END OF FILE
+    //  printf("Read_bit is: %d\n", read_bit);
+    if (read_bit == 1)
+    {
+      currnode = currnode->right;
+      // printf("Going right\n");
+    }
+    else
+    {
+      currnode = currnode->left;
+      // printf("Going left\n");
+    }
+    if (is_leaf(currnode))
+    {
+      fputc(currnode->val, uncompressed_file);
+      currnode = huff_tree; // reset to root of tree, we hit a leaf node
+      // printf("Found a leaf!\n");
+    }
+    else
+    {
+      // printf("Didn't find a leaf\n");
+    }
+  }
+  fclose(input_file);
   // close(fd);j
   return 0;
 }

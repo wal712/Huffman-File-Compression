@@ -1,3 +1,4 @@
 /bin
 .vscode
 compressed*.txt
+uncompressed*.txt

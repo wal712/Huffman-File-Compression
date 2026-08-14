@@ -57,9 +57,7 @@ int read_bytes(Byte_Buffer *buffer, FILE *input)
 	}
 
 	assert(buffer->length > 0);
-	int mask = 0b10000000;
-	int to_return = buffer->buffer & mask;
-	buffer->buffer = (buffer->buffer) << 1;
+	// int to_return = (buffer->buffer >> (buffer->length - 1) & 1);
 	buffer->length--;
-	return to_return;
+	return (buffer->buffer >> (buffer->length) & 1);
 }
