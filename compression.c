@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 {
   if (argc < 2)
   {
-    printf("Usage: %s <filenames\n", argv[0]);
+    printf("Usage: %s <filenames>\n", argv[0]);
     return 1;
   }
 
@@ -116,7 +116,6 @@ int main(int argc, char **argv)
 
   gen_huff_tree(huff_tree, code_table, 0, 0);
 
-  // TODO: create new file to write to
   char new_filename[FILE_NAME_MAX] = "compressed_";
   int max_length = FILE_NAME_MAX - strlen(new_filename);
   strncat(new_filename, argv[1], max_length);
@@ -134,6 +133,24 @@ int main(int argc, char **argv)
   compressed_file = fopen(new_filename, "w+");
 
   assert(compressed_file);
+
+  char newer_filename[FILE_NAME_MAX] = "uncompressed_";
+  max_length = FILE_NAME_MAX - strlen(newer_filename);
+  strncat(newer_filename, argv[1], max_length);
+
+  FILE *uncompressed_file = fopen(newer_filename, "r");
+  if (uncompressed_file != NULL)
+  {
+    printf("Error: %s already exists as a file here. Please either rename or remove said file and try again\n", newer_filename);
+    fclose(input_file);
+    // close(fd);j
+    return 0;
+  }
+
+  printf("uncompressed file name is: %s\n", newer_filename);
+  uncompressed_file = fopen(newer_filename, "w+");
+
+  assert(uncompressed_file);
 
   // TODO: write out freq_table as header of compressed file:
   /*
@@ -214,7 +231,19 @@ int main(int argc, char **argv)
   }
 
   // TODO: make a byte reader
-  fclose(input_file);
+  /*
+   * Ok what do we need:
+   * We probably want to use the huff_tree, and the byte buffer
+   * Probably a nested loop, where inner loop reads a bit at a time, pick left or right branch of current node in huff_tree ->
+   * -> and stop loop when isLeaf(currnode) = 1 (true), at which point we write the given value at the node into the uncompressed file
+   * we continue with this loop until our reader function returns EOF
+   * to do this, we need to read in each byte (char) as an int, so we can intepret EOF correctly
+   * Then, we wrap said inner loop in an outer loop that checks if our reader function returns -1, at which point we are done
+   * TODO: handle excess 0 bits at the end -> Either add length of expected number of bits to header, or might just resolve itself
+   * -> That last bit needs explaining, basically we might not hit a leaf with excess zero bits, and then we terminate so its fine, not sure tho
+   */
+
+    fclose(input_file);
   // close(fd);j
   return 0;
 }

@@ -24,4 +24,5 @@ void init_node(Node *node, Node *left, Node *right, int weight);
 void init_queue(PQueue *q, int size);
 void queue_add(PQueue *q, Node *item);
 Node *dequeue(PQueue *q);
+int is_leaf(Node *node);
 #endif

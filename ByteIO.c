@@ -40,3 +40,26 @@ void flush_write(Byte_Buffer *buffer, FILE *output)
 	}
 	buffer->buffer = 0;
 }
+
+int read_bytes(Byte_Buffer *buffer, FILE *input)
+{
+	assert(buffer);
+	if (buffer->length == 0)
+	{
+		assert(input);
+		int c = fgetc(input);
+		if (c == EOF)
+		{
+			return EOF;
+		}
+		buffer->buffer = (unsigned char)c;
+		buffer->length = 8;
+	}
+
+	assert(buffer->length > 0);
+	int mask = 0b10000000;
+	int to_return = buffer->buffer & mask;
+	buffer->buffer = (buffer->buffer) << 1;
+	buffer->length--;
+	return to_return;
+}

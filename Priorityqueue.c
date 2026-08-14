@@ -53,7 +53,6 @@ void queue_add(PQueue *q, Node *item)
 
   q->arr[tail] = item;
 
-  // TODO: Need to handle circular insert
   for (int i = 0; i < q->length - 1; i++)
   {
     int idx1 = (((tail - i) % q->capacity) + q->capacity) % q->capacity;     // One liner to get positive remainder in the range [0, capacity - 1]
@@ -80,4 +79,16 @@ Node *dequeue(PQueue *q)
 
   q->length--;
   return q->arr[q->head++];
+}
+
+int is_leaf(Node *node)
+{
+  if (!node->left && !node->right)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
 }

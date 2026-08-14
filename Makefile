@@ -7,4 +7,5 @@ press:
 
 clean:
 	rm compressed*.txt
+	rm uncompressed*.txt
 
