@@ -62,11 +62,13 @@ int main(int argc, char **argv)
 
   int freq_table[256] = {0};
   char c;
+  int num_chars = 0;
 
   while ((c = fgetc(input_file)) != EOF)
   {
     // printf("idx: %u\n", (unsigned char)c);
     freq_table[(unsigned char)c]++;
+    num_chars++;
   }
 
   PQueue q;
@@ -177,6 +179,7 @@ int main(int argc, char **argv)
 
   fputc('\n', compressed_file);
   // TODO: write out length of file? or figure out how to ensure extra zero bytes after writer flush don't get interpreted
+  fprintf(compressed_file, "%d ", num_chars);
 
   // TODO: write encoded file contents
   // I think literally just read each byte from original file and find it in code table
@@ -223,6 +226,15 @@ int main(int argc, char **argv)
     num_buffer[0] = '\0';
   }
 
+  while ((c = fgetc(compressed_file)) != ' ')
+  {
+    assert(c != EOF);
+    strncat(num_buffer, &c, 1);
+  }
+
+  // TODO: did I do this in the right place??
+  int new_num_chars = strtol(num_buffer, NULL, 0);
+
   // you can get rid of this later obviously
   //  TODO: write actual tests bro
   for (int i = 0; i < BYTE_MAX; i++)
@@ -245,8 +257,9 @@ int main(int argc, char **argv)
 
   // TODO: Need to generalize creation of huff tree and code table so I can use seperately for compression and decompression
   int read_bit;
+  int chars_read = 0;
   Node *currnode = huff_tree;
-  while ((read_bit = read_bytes(&buffer, compressed_file)) != EOF) // TODO: add check if weve reached end of length specified in header
+  while (((read_bit = read_bytes(&buffer, compressed_file)) != EOF) && chars_read < new_num_chars) // TODO: add check if weve reached end of length specified in header
   {
     // TODO: HANDLE EXCESS BITS AT END OF FILE
     //  printf("Read_bit is: %d\n", read_bit);
@@ -264,6 +277,7 @@ int main(int argc, char **argv)
     {
       fputc(currnode->val, uncompressed_file);
       currnode = huff_tree; // reset to root of tree, we hit a leaf node
+      chars_read++;
       // printf("Found a leaf!\n");
     }
     else
@@ -271,6 +285,11 @@ int main(int argc, char **argv)
       // printf("Didn't find a leaf\n");
     }
   }
+
+  // if (read_bit != EOF)
+  // {
+  //   printf("Terminated from header length!!\n");
+  // }
   fclose(input_file);
   // close(fd);j
   return 0;
