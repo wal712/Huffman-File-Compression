@@ -77,8 +77,10 @@ Node *dequeue(PQueue *q)
   assert(q->arr);
   assert(q->length > 0);
 
+  Node *item = q->arr[q->head];
   q->length--;
-  return q->arr[q->head++];
+  q->head = (q->head + 1) % q->capacity;
+  return item;
 }
 
 int is_leaf(Node *node)

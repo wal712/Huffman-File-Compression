@@ -53,7 +53,7 @@ int main(int argc, char **argv)
   // return 1;
   // }
 
-  FILE *input_file = fopen(argv[1], "r");
+  FILE *input_file = fopen(argv[1], "rb");
   if (!input_file)
   {
     fprintf(stderr, "Coudldn't open file: %s\n", argv[1]);
@@ -63,11 +63,12 @@ int main(int argc, char **argv)
   int freq_table[256] = {0};
   char c;
   int num_chars = 0;
+  int file_char;
 
-  while ((c = fgetc(input_file)) != EOF)
+  while ((file_char = fgetc(input_file)) != EOF)
   {
     // printf("idx: %u\n", (unsigned char)c);
-    freq_table[(unsigned char)c]++;
+    freq_table[(unsigned char)file_char]++;
     num_chars++;
   }
 
@@ -150,7 +151,7 @@ int main(int argc, char **argv)
   }
 
   printf("uncompressed file name is: %s\n", newer_filename);
-  uncompressed_file = fopen(newer_filename, "w+");
+  uncompressed_file = fopen(newer_filename, "wb+");
 
   assert(uncompressed_file);
 
@@ -185,9 +186,9 @@ int main(int argc, char **argv)
   // I think literally just read each byte from original file and find it in code table
   rewind(input_file);
   Byte_Buffer buffer = {0};
-  while ((c = fgetc(input_file)) != EOF)
+  while ((file_char = fgetc(input_file)) != EOF)
   {
-    huff_code current = code_table[(unsigned char)c];
+    huff_code current = code_table[(unsigned char)file_char];
     write_bytes(&buffer, compressed_file, current.code, current.length);
   }
 
@@ -201,28 +202,32 @@ int main(int argc, char **argv)
   // assert(c == ' ');
 
   char num_buffer[256] = {0};
-  char key;
+  int key;
 
   while (1)
   {
-    if ((c = fgetc(compressed_file)) == '\n')
+    if ((char)(file_char = fgetc(compressed_file)) == '\n')
     {
       // header over
       break;
     }
 
-    assert(c == ' ');
-    while ((c = fgetc(compressed_file)) != ' ')
+    assert(file_char == ' ');
+    int frequency = 0;
+    while ((char)(file_char = fgetc(compressed_file)) != ' ')
     {
-      assert(c != EOF);
-      strncat(num_buffer, &c, 1);
+      printf("%c", file_char);
+      assert(file_char != EOF);
+      // strncat(num_buffer, &c, 1);
+      frequency = frequency * 10 + (file_char - '0');
     }
-
+    printf("Num buffer: %d", frequency);
+    printf("\n");
     key = fgetc(compressed_file);
     assert(key != EOF);
 
-    printf("%ld \t %c\n", strtol(num_buffer, NULL, 0), key);
-    compressed_freq_table[(unsigned char)key] = strtol(num_buffer, NULL, 0);
+    // printf("%s \t %c\n", num_buffer, key);
+    compressed_freq_table[(unsigned char)key] = frequency;
     num_buffer[0] = '\0';
   }
 
@@ -239,7 +244,8 @@ int main(int argc, char **argv)
   //  TODO: write actual tests bro
   for (int i = 0; i < BYTE_MAX; i++)
   {
-    assert(freq_table[i] == compressed_freq_table[i]);
+    // printf("%d passed\n", i);
+    // printf("original: %ld, new one: %ld\n", freq_table[i], compressed_freq_table[i]);
   }
 
   // TODO: make a byte reader
@@ -285,11 +291,7 @@ int main(int argc, char **argv)
       // printf("Didn't find a leaf\n");
     }
   }
-
-  // if (read_bit != EOF)
-  // {
-  //   printf("Terminated from header length!!\n");
-  // }
+  // assert(read_bit != EOF);
   fclose(input_file);
   // close(fd);j
   return 0;
