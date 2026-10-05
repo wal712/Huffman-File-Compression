@@ -38,7 +38,7 @@ void gen_huff_tree(Node *tree, huff_code *code_table, unsigned long code, int co
     gen_huff_tree(tree->right, code_table, (code << 1) + 1, code_length + 1);
 }
 
-void compress_file(FILE *fp);
+void compress_file(FILE *input_file, FILE *output_file);
 
 int main(int argc, char **argv)
 {
@@ -59,31 +59,41 @@ int main(int argc, char **argv)
         }
     }
 
-    // I wrote it this way because I didn't like checking the flag each iter of the loop
-    // that was a dumb and bad decision but I'm not changing it
+    if (optind >= argc)
+    {
+        fprintf(stderr, "Please include file names\n");
+        return EXIT_FAILURE;
+    }
+
+    char target_fname_buffer[FILE_NAME_MAX];
     if (decompress_flag)
     {
-        // TODO: loop through and decompress
     }
     else
     {
-        // loop through and compress
         for (int i = optind; i < argc; i++)
         {
             FILE *input_file = fopen(argv[i], "rb");
+
             if (!input_file)
             {
-                fprintf(stderr, "Coudldn't open file: %s\n", argv[1]);
+                fprintf(stderr, "Failed to open file %s\n", argv[i]);
                 perror("fopen: ");
+                fprintf(stderr, "Continuing to next file...\n");
+                continue;
             }
-            else
+            snprintf(target_fname_buffer, FILE_NAME_MAX, "%s.press", argv[i]);
+            FILE *compressed_file = fopen(target_fname_buffer, "wxb"); // only opens if it doesn't already exist
+
+            if (!compressed_file)
             {
-                // do we check for output file here?
-                // do we take in file names?
-                // depends, does this compress one file at a time or multiple
-                // one is probably better, could still automate
-                compress_file(input_file);
+                fprintf(stderr, "Failed to create file %s\n", target_fname_buffer);
+                perror("fopen: ");
+                fprintf(stderr, "Continuing to next file...\n");
+                continue;
             }
+
+            compress_file(input_file, compressed_file);
         }
     }
 
@@ -333,7 +343,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void compress_file(FILE *fp)
+void compress_file(FILE *input_file, FILE *output_file)
 {
     return;
 }
